@@ -14,16 +14,10 @@ export const logoutLineLogin = () => {
   window.location.reload();
 };
 
-export async function initLineLogin(runApp: any) {
-  liff.init(
-    { liffId: "1657275559-28GdPGJ9" },
-    () => {
-      if (liff.isLoggedIn()) {
-        runApp();
-      } else {
-        liff.login();
-      }
-    },
-    (err) => console.error(err)
-  );
+export async function initLineLogin() {
+  try {
+    await liff.init({
+      liffId: "1657275559-28GdPGJ9",
+    });
+  } catch (e) {}
 }
