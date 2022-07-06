@@ -14,10 +14,12 @@ export const logoutLineLogin = () => {
   window.location.reload();
 };
 
+const liffId: string = process.env.REACT_APP_MY_LIFF_ID ?? "";
+
 export async function initLineLogin() {
   try {
     await liff.init({
-      liffId: "1657275559-28GdPGJ9",
+      liffId,
     });
   } catch (e) {}
 }
