@@ -1,47 +1,89 @@
 import "./App.css";
 import liff from "@line/liff";
 import { useEffect, useState } from "react";
-import { initLineLogin, LineLoginContext, logoutLineLogin } from "./liff/liff";
+import { initLineLogin, logoutLineLogin } from "./liff/liff";
 
 function App() {
-  const [liffInitialized, setLiffInitialized] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [errorInit, setErrorInit] = useState<any>(undefined);
+  const [idToken, setIdToken] = useState<any>("");
+  const [displayName, setDisplayName] = useState("");
+  const [statusMessage, setStatusMessage] = useState<any>("");
+  const [userId, setUserId] = useState("");
+
+  const runApp = () => {
+    const idToken = liff.getIDToken();
+    setIdToken(idToken);
+    liff
+      .getProfile()
+      .then((profile) => {
+        console.log(profile);
+        setDisplayName(profile.displayName);
+        setStatusMessage(profile.statusMessage);
+        setUserId(profile.userId);
+      })
+      .catch((err) => console.error(err));
+  };
 
   useEffect(() => {
-    async function initializer() {
-      setLoading(true);
-      try {
-        await initLineLogin();
-        setLiffInitialized(true);
-      } catch (e) {
-        setErrorInit(e);
-        console.error("There was an error when trying to init Liff", e);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    initializer();
+    initLineLogin(runApp);
   }, []);
 
-  if (errorInit) {
-    return <p>There was an error: {errorInit?.message}</p>;
-  }
-  const liffData = liffInitialized ? liff : undefined;
+  return (
+    <div className="App">
+      <header className="App-header">
+        <div style={{ textAlign: "center" }}>
+          <h1>React with LINE Login test bot1</h1>
+          <hr />
+          <p
+            style={{
+              textAlign: "left",
+              marginLeft: "20%",
+              marginRight: "20%",
+              wordBreak: "break-all",
+            }}
+          >
+            <b>id token: </b> {idToken}
+          </p>
+          <p
+            style={{
+              textAlign: "left",
+              marginLeft: "20%",
+              marginRight: "20%",
+              wordBreak: "break-all",
+            }}
+          >
+            <b>display name: </b> {displayName}
+          </p>
+          <p
+            style={{
+              textAlign: "left",
+              marginLeft: "20%",
+              marginRight: "20%",
+              wordBreak: "break-all",
+            }}
+          >
+            <b>status message: </b> {statusMessage}
+          </p>
+          <p
+            style={{
+              textAlign: "left",
+              marginLeft: "20%",
+              marginRight: "20%",
+              wordBreak: "break-all",
+            }}
+          >
+            <b>user id: </b> {userId}
+          </p>
 
-  if (liffData === undefined || loading) {
-    return null;
-  }
-
-  if (liffData.isInClient?.()) {
-    return (
-      <LineLoginContext.Provider value={liffData}>
-        <p>APPPP</p>
-      </LineLoginContext.Provider>
-    );
-  }
-
-  return <p>QR CODE PAGE</p>;
+          <button
+            onClick={() => logoutLineLogin()}
+            style={{ width: "100%", height: 30 }}
+          >
+            Logout
+          </button>
+        </div>
+      </header>
+    </div>
+  );
 }
+
 export default App;
