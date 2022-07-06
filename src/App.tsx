@@ -1,7 +1,7 @@
 import "./App.css";
 import liff from "@line/liff";
 import { useEffect, useState } from "react";
-import { initLineLogin } from "./liff/liff";
+import { initLineLogin, logoutLineLogin } from "./liff/liff";
 
 function App() {
   const [liffInitialized, setLiffInitialized] = useState(false);
@@ -35,7 +35,18 @@ function App() {
     return <p>Loading</p>;
   }
   if (!liff.isLoggedIn()) liff.login();
-  return <p> app bitch</p>;
+  return (
+    <div>
+      {" "}
+      <p>app bitch</p>
+      <button
+        onClick={() => logoutLineLogin()}
+        style={{ width: "100%", height: 30 }}
+      >
+        Logout
+      </button>
+    </div>
+  );
 }
 
 export default App;
